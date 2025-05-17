@@ -1,0 +1,304 @@
+miorganizacion2_unittesting-oliver
+
+RUC	Razón Social	Actividad Principal
+20516072955	DACHSER PERU S.A.C.	Logística y transporte internacional
+20516667550	DELFIN GROUP CO. S.A.C.	Logística y transporte internacional
+20518156706	DT DINETPERU S.A.C.	Logística y transporte internacional
+20525137075	EMPRESA MARITIMA B & M S.A.C.	Transporte marítimo
+20522951651	INTEGRATED GLOBAL LOGISTICS S.A.	Logística y transporte internacional
+20566429943	ISS MARINE SERVICES S.A.C.	Servicios marítimos y logísticos
+20504363903	SAKJ DEPOT S.A.C.	Logística y almacenamiento
+20517189503	SEVEN SEAS LINE S.A.C.	Transporte marítimo
+20507646051	TERMINALES PORTUARIOS PERUANOS S.A.C.	Operaciones portuarias
+20508956020	TRANSTOTAL AGENCIA MARITIMA S.A.	Agencia marítima y logística
+
+
+
+=======================================================================================================================================
+=======================================================================================================================================
+(En aplicacion inyectas la interface del dominio -> aplicacion usa la intefaz creada en dominio con las firmas de infra)
+[application]     -> usa ->   [domain]  (PORTS IN)
+
+(En infrastructure creas una clase que se va a implementar en -> domino -> creas la interfaz con las firmas de la clase de infrastructure )
+[infrastructure]  -> implementa -> [domain]    (PORTS OUTS)
+
+
+=======================================================================================================================================
+=======================================================================================================================================
+
+[REST Controller (infra)]
+          |
+          v
+[RegistrarEmpresaUseCase - port in]   <== Implementado por ==>   [RegistrarEmpresaService (application)]
+          |
+          v
+[EmpresaRepository - port out]        <== Implementado por ==>   [EmpresaRepositoryImpl (infrastructure)]
+
+NOTA:
+as interfaces solo se crean en el modulo de dominio implementadas desde el modulo de infrastructure y 
+luego estas interfaces se inyectan en el modulo de applicacion, es decir son consumidas por application
+
+
+
+
+🔷 ports in — Interfaces de Entrada
+
+    Definidas en el módulo domain.
+
+    Implementadas en el módulo application.
+    
+    Inyectadas en el módulo infrastructure
+
+    Son los casos de uso que expone tu negocio.
+    
+🔶 ports out — Interfaces de Salida
+
+    Definidas en el módulo domain.
+
+    Implementadas en el módulo infrastructure.
+
+    Inyectadas en el módulo application (dentro de los casos de uso que las usan).
+
+    
+    
+    
+
+retrofit-fino-ext-prueba/
+├── pom.xml                      # POM raíz con packaging <pom>
+├── mvnw
+├── mvnw.cmd
+├── README.md
+├── HELP.md
+
+├── application/
+│   ├── pom.xml
+│   └── src/
+│       ├── main/
+│       │   ├── java/
+│       │   │   └── com/oliver/retrofit/
+│       │   │       ├── RetrofitApplication.java          # Clase principal
+│       │   │       └── application/
+│       │   │           ├── web/
+│       │   │           │   └── PersonaController.java
+│       │   │           ├── service/
+│       │   │           │   └── PersonaService.java
+│       │   │           ├── dto/
+│       │   │           │   ├── PersonaDto.java
+│       │   │           │   └── PersonaDtoBuilder.java
+│       │   │           ├── mapper/
+│       │   │           │   └── PersonaMapper.java
+│       │   │           └── exception/
+│       │   │               ├── GlobalExceptionHandler.java
+│       │   │               └── InvalidCustomException.java
+│       │   └── resources/
+│       │       ├── application.yml
+│       │       └── application.properties
+│       └── test/
+│           └── java/
+│               └── com/oliver/retrofit/
+│                   └── RetrofitApplicationTests.java
+
+├── domain/
+│   ├── pom.xml
+│   └── src/
+│       ├── main/
+│       │   └── java/
+│       │       └── com/oliver/retrofit/domain/
+│       │           ├── model/
+│       │           │   └── Persona.java
+│       │           └── port/
+│       │               └── repository/
+│       │                   └── PersonaRepository.java
+│       └── test/
+│           └── java/
+│               └── com/oliver/retrofit/domain/
+│                   └── model/
+│                       └── PersonaTest.java (opcional)
+
+├── infrastructure/
+│   ├── pom.xml
+│   └── src/
+│       ├── main/
+│       │   └── java/
+│       │       └── com/oliver/retrofit/infrastructure/
+│       │           ├── CreaTablaPersona.java
+│       │           ├── config/
+│       │           │   ├── openFeign/
+│       │           │   │   └── ReniecFeignClient.java
+│       │           │   ├── restTemp/
+│       │           │   │   ├── ReniecRestClient.java
+│       │           │   │   └── RestTemplateConfig.java
+│       │           │   ├── retrofit/
+│       │           │   │   ├── ReniecApiClient.java
+│       │           │   │   └── RetrofitConfig.java
+│       │           │   └── ReniecApiSelector.java
+│       │           └── jooq/
+│       │               ├── record/
+│       │               │   ├── PersonaRecord.java
+│       │               │   └── PersonaRecordMapper.java
+│       │               ├── table/
+│       │               │   └── PersonaTable.java
+│       │               └── repository/
+│       │                   ├── PersonaRepositoryImpl.java
+│       │                   └── ReniecClientType.java
+│       └── test/
+│           └── java/
+│               └── com/oliver/retrofit/infrastructure/
+│                   └── repository/
+│                       └── PersonaRepositoryImplTest.java (opcional)
+
+
+
+                +---------------------+
+                |     application     |
+                | (controladores,     |
+                |  servicios, DTOs,   |
+                |  mappers, errores)  |
+                +---------▲-----------+
+                          |
+                          |
+         depends on       |   
+                          |
+                +---------+-----------+
+                |        domain       |
+                | (entidades +        |
+                |  interfaces/puertos)|
+                +---------▲-----------+
+                          |
+                          |
+         implemented by   |
+                          |
+                +---------+-----------+
+                |    infrastructure   |
+                | (adaptadores: jOOQ, |
+                |  Feign, Retrofit...)|
+                +---------------------+
+
+
+retrofit-fino-ext-prueba/
+├── pom.xml                        								# Padre
+├── application/                  								# Módulo de orquestación
+│   ├── pom.xml
+│   └── src/main/java/com/codigo/msregisterhexagonal/application
+│       ├── ApplicationLauncher.java     						# (antes RetrofitApplication.java)
+│       └── controller/
+│           └── PersonaController.java
+├── domain/                       								# Módulo de dominio puro
+│   ├── pom.xml
+│   └── src/main/java/com/codigo/msregisterhexagonal/domain
+│       ├── aggregates/
+│       │   └── dto/
+│       │       └── PersonaDto.java
+│       ├── ports/
+│       │   ├── in/
+│       │   │   └── PersonaService.java
+│       │   └── out/
+│       │       └── PersonaRepository.java
+│       └── model/
+│           └── Persona.java
+├── infrastructure/              								# Módulo de implementación
+│   ├── pom.xml
+│   └── src/main/java/com/codigo/msregisterhexagonal/infrastructure
+│       ├── adapters/
+│       │   └── PersonaAdapter.java       						# puente entre app y repository
+│       ├── config/
+│       │   ├── MapperConfig.java
+│       │   └── retrofit/
+│       │       ├── RetrofitConfig.java
+│       │       └── ReniecApiClient.java
+│       ├── feign/
+│       │   └── ReniecFeignClient.java
+│       ├── entity/
+│       │   └── PersonaRecord.java
+│       ├── mapper/
+│       │   └── PersonaMapper.java
+│       ├── repository/
+│       │   ├── PersonaRepositoryImpl.java
+│       │   └── ReniecClientType.java
+│       ├── response/
+│       │   └── ApiResponse.java
+│       ├── utils/
+│       │   └── Constants.java
+│       └── exception/
+│           ├── GlobalExceptionHandler.java
+│           └── InvalidCustomException.java
+
+
+
+
+
+
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-starter-jooq/3.3.5/spring-boot-starter-jooq-3.3.5.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-starter-jdbc/3.3.5/spring-boot-starter-jdbc-3.3.5.jar
+/home/oli/.m2/repository/com/zaxxer/HikariCP/5.1.0/HikariCP-5.1.0.jar
+/home/oli/.m2/repository/org/springframework/spring-jdbc/6.1.14/spring-jdbc-6.1.14.jar
+/home/oli/.m2/repository/org/springframework/spring-tx/6.1.14/spring-tx-6.1.14.jar
+/home/oli/.m2/repository/org/springframework/spring-beans/6.1.14/spring-beans-6.1.14.jar
+/home/oli/.m2/repository/org/jooq/jooq/3.19.14/jooq-3.19.14.jar
+/home/oli/.m2/repository/io/r2dbc/r2dbc-spi/1.0.0.RELEASE/r2dbc-spi-1.0.0.RELEASE.jar
+/home/oli/.m2/repository/org/reactivestreams/reactive-streams/1.0.4/reactive-streams-1.0.4.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.3.5/spring-boot-starter-web-3.3.5.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-starter/3.3.5/spring-boot-starter-3.3.5.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot/3.3.5/spring-boot-3.3.5.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/3.3.5/spring-boot-autoconfigure-3.3.5.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-starter-logging/3.3.5/spring-boot-starter-logging-3.3.5.jar
+/home/oli/.m2/repository/ch/qos/logback/logback-classic/1.5.11/logback-classic-1.5.11.jar
+/home/oli/.m2/repository/ch/qos/logback/logback-core/1.5.11/logback-core-1.5.11.jar
+/home/oli/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.23.1/log4j-to-slf4j-2.23.1.jar
+/home/oli/.m2/repository/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar
+/home/oli/.m2/repository/org/slf4j/jul-to-slf4j/2.0.16/jul-to-slf4j-2.0.16.jar
+/home/oli/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar
+/home/oli/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-starter-json/3.3.5/spring-boot-starter-json-3.3.5.jar
+/home/oli/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.17.2/jackson-databind-2.17.2.jar
+/home/oli/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.17.2/jackson-annotations-2.17.2.jar
+/home/oli/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.17.2/jackson-core-2.17.2.jar
+/home/oli/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.17.2/jackson-datatype-jdk8-2.17.2.jar
+/home/oli/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.17.2/jackson-datatype-jsr310-2.17.2.jar
+/home/oli/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.17.2/jackson-module-parameter-names-2.17.2.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/3.3.5/spring-boot-starter-tomcat-3.3.5.jar
+/home/oli/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.31/tomcat-embed-core-10.1.31.jar
+/home/oli/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/10.1.31/tomcat-embed-el-10.1.31.jar
+/home/oli/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/10.1.31/tomcat-embed-websocket-10.1.31.jar
+/home/oli/.m2/repository/org/springframework/spring-web/6.1.14/spring-web-6.1.14.jar
+/home/oli/.m2/repository/io/micrometer/micrometer-observation/1.13.6/micrometer-observation-1.13.6.jar
+/home/oli/.m2/repository/io/micrometer/micrometer-commons/1.13.6/micrometer-commons-1.13.6.jar
+/home/oli/.m2/repository/org/springframework/spring-webmvc/6.1.14/spring-webmvc-6.1.14.jar
+/home/oli/.m2/repository/org/springframework/spring-aop/6.1.14/spring-aop-6.1.14.jar
+/home/oli/.m2/repository/org/springframework/spring-context/6.1.14/spring-context-6.1.14.jar
+/home/oli/.m2/repository/org/springframework/spring-expression/6.1.14/spring-expression-6.1.14.jar
+/home/oli/.m2/repository/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
+/home/oli/.m2/repository/org/checkerframework/checker-qual/3.42.0/checker-qual-3.42.0.jar
+/home/oli/.m2/repository/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-starter-test/3.3.5/spring-boot-starter-test-3.3.5.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-test/3.3.5/spring-boot-test-3.3.5.jar
+/home/oli/.m2/repository/org/springframework/boot/spring-boot-test-autoconfigure/3.3.5/spring-boot-test-autoconfigure-3.3.5.jar
+/home/oli/.m2/repository/com/jayway/jsonpath/json-path/2.9.0/json-path-2.9.0.jar
+/home/oli/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar
+/home/oli/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/4.0.2/jakarta.xml.bind-api-4.0.2.jar
+/home/oli/.m2/repository/jakarta/activation/jakarta.activation-api/2.1.3/jakarta.activation-api-2.1.3.jar
+/home/oli/.m2/repository/net/minidev/json-smart/2.5.1/json-smart-2.5.1.jar
+/home/oli/.m2/repository/net/minidev/accessors-smart/2.5.1/accessors-smart-2.5.1.jar
+/home/oli/.m2/repository/org/ow2/asm/asm/9.6/asm-9.6.jar
+/home/oli/.m2/repository/org/assertj/assertj-core/3.25.3/assertj-core-3.25.3.jar
+/home/oli/.m2/repository/net/bytebuddy/byte-buddy/1.14.19/byte-buddy-1.14.19.jar
+/home/oli/.m2/repository/org/awaitility/awaitility/4.2.2/awaitility-4.2.2.jar
+/home/oli/.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar
+/home/oli/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.5/junit-jupiter-5.10.5.jar
+/home/oli/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.5/junit-jupiter-api-5.10.5.jar
+/home/oli/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar
+/home/oli/.m2/repository/org/junit/platform/junit-platform-commons/1.10.5/junit-platform-commons-1.10.5.jar
+/home/oli/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar
+/home/oli/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.5/junit-jupiter-params-5.10.5.jar
+/home/oli/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.5/junit-jupiter-engine-5.10.5.jar
+/home/oli/.m2/repository/org/junit/platform/junit-platform-engine/1.10.5/junit-platform-engine-1.10.5.jar
+/home/oli/.m2/repository/org/mockito/mockito-core/5.11.0/mockito-core-5.11.0.jar
+/home/oli/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.19/byte-buddy-agent-1.14.19.jar
+/home/oli/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar
+/home/oli/.m2/repository/org/mockito/mockito-junit-jupiter/5.11.0/mockito-junit-jupiter-5.11.0.jar
+/home/oli/.m2/repository/org/skyscreamer/jsonassert/1.5.3/jsonassert-1.5.3.jar
+/home/oli/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar
+/home/oli/.m2/repository/org/springframework/spring-core/6.1.14/spring-core-6.1.14.jar
+/home/oli/.m2/repository/org/springframework/spring-jcl/6.1.14/spring-jcl-6.1.14.jar
+/home/oli/.m2/repository/org/springframework/spring-test/6.1.14/spring-test-6.1.14.jar
+/home/oli/.m2/repository/org/xmlunit/xmlunit-core/2.9.1/xmlunit-core-2.9.1.jar

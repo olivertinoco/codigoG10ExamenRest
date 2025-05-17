@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: sunat
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/codigo
+    username: postgres
+    password: postgres
+  jooq:
+    sql-dialect: POSTGRES
+
+server:
+  port: 8093
+
+token:
+  api: apis-token-14583.fpx8R0rgtdcCn0k8T63JABwPBNJZyqnP
+
+api:
+  reniec:
+    base-url: https://api.apis.net.pe
+
+logging:
+  level:
+    org.jooq: DEBUG
+#    root: DEBUG
