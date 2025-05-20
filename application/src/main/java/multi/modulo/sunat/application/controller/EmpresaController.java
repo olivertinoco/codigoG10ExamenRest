@@ -1,5 +1,6 @@
 package multi.modulo.sunat.application.controller;
 
+import lombok.NoArgsConstructor;
 import multi.modulo.sunat.domine.model.EmpresaDto;
 import multi.modulo.sunat.domine.ports.in.EmpresaService;
 
